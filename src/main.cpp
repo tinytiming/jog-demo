@@ -34,9 +34,9 @@ static AW9110JogDial jog(0x5B);
 #define LED_PUSHED    255      // jog-LED brightness while a big push is held (full)
 
 // Each column lights one dot at row rowPos[col]. Starts as row 2 in every column
-// (a horizontal line). Small push moves the central dot (column 2) up/down; big
-// push snaps the outer dots to the central dot's row; center push snaps the
-// central dot back onto the outer dots.
+// (a horizontal line). Small push previews a move of the central dot (column 2)
+// and one neighbour; big push commits it and snaps the outer dots to the central
+// dot's row; center push flips the board 90 degrees.
 static uint8_t rowPos[MATRIX_W] = { 2, 2, 2, 2, 2 };
 static bool transposed = false;   // center push flips the board 90 deg (rows <-> cols)
 
@@ -144,7 +144,7 @@ static void tryBegin() {
     jog.enableAutoLED(false);                                  // the demo owns the jog LED
     applyLed();                                                // steady hue, 50% while idle
     Serial.println(F("jog ready: small push previews a move (on press), release cancels,"));
-    Serial.println(F("           big push commits/equalizes, center push snaps central back"));
+    Serial.println(F("           big push commits/equalizes, center push flips the board"));
   } else {
     Serial.println(F("jog not found at 0x5B (check I2C wiring); retrying"));
   }

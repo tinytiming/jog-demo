@@ -6,6 +6,10 @@ expander / LED driver — from an **Unexpected Maker FeatherS2 Neo** (ESP32-S2)
 over I²C, and shows the navigation on the FeatherS2 Neo's **built-in 5×5 RGB
 matrix**.
 
+[![Jog demo video](media/jog-demo.jpg)](media/jog-demo.mp4)
+
+▶ [Watch the demo (MP4, 19 s)](media/jog-demo.mp4)
+
 Each matrix column lights one dot at a row; it starts as a horizontal line at
 **row 2**. Column 2's dot is the **central** dot, columns 0/1/3/4 are the
 **outer** dots. The lever is a two-stage switch, so a light touch and a full
@@ -64,6 +68,23 @@ expander every `JOG_POLL_MS` (50 ms) — fine for a jog dial. For zero-poll,
 interrupt-driven operation, run a wire from J2's INT pin to a free Feather GPIO
 and set `PIN_JOG_INT` in [`src/main.cpp`](src/main.cpp) to that pin (e.g. `5`).
 
+## Light pipe
+
+The diffuser on the jog board in the video is a 3D-printed (FDM) light pipe that
+sits on the PCB's front face: it encloses the side-emitting RGB LED, carries the
+light over the AW9110C on a floating bar, then splits it into two skirts and a
+cover that form a light box around the jog dial. It mounts through the two
+dial-end holes (H2/H4).
+
+| Variant                                                    | Notes                                              |
+| ---------------------------------------------------------- | -------------------------------------------------- |
+| [`hardware/light_pipe`](hardware/light_pipe)               | Original                                           |
+| [`hardware/light_pipe_longer`](hardware/light_pipe_longer) | Skirts and cover extended 2 mm toward the dial tip |
+
+Each folder has the printable `light_pipe.stl`, the `light_pipe.step`, and the
+`light_pipe_gen.py` build123d generator that produces them (needs `build123d`,
+`trimesh`, `shapely`, `numpy`).
+
 ## Board map (from the revC2 netlist)
 
 The AW9110C splits its 10 outputs into two register groups: **P0 = OUT4–9**,
@@ -95,9 +116,10 @@ pio run -t upload       # flash the FeatherS2 Neo (hold BOOT, tap RESET if it wo
 pio device monitor      # 115200 baud
 ```
 
-On boot the jog board's LED starts breathing and the matrix shows the cursor.
-Work the lever and watch the cursor move (1 row on a light touch, 2 on a full
-throw) and the hue rotate.
+On boot the matrix shows a horizontal line on row 2 and the jog LED glows
+steadily at 50% in that row's hue. A light touch previews a one-row move, a full
+throw commits it, releasing early cancels it, and a center push flips the line
+between horizontal and vertical.
 
 ## Notes
 
